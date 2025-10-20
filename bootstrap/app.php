@@ -12,7 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->statefulApi()
+                ->validateCsrfTokens(except: [
+                    'api/*',
+                ]);
+
+            $middleware->web(append: [
+                \Illuminate\Http\Middleware\HandleCors::class,
+            ]);
+
+            $middleware->api(prepend: [
+                \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
